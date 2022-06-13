@@ -1,0 +1,8 @@
+config BR2_PACKAGE_BOYSENBOARD_FLASHDRIVE
+	bool "flashdrive"
+	select BR2_PACKAGE_HOST_GENIMAGE
+	select BR2_PACKAGE_HOST_DOSFSTOOLS
+	select BR2_PACKAGE_HOST_MTOOLS
+	help
+		Builds an image that is stored in the SPI flash which is then mounted as a
+		USB Storage device using the USB Gadget subsystem.

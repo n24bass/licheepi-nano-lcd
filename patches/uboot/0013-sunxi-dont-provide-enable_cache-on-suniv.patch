@@ -1,0 +1,25 @@
+From 90c6be23ebaa2d767e2ca5af0aa0d347e15a9bf2 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <19787629+mclewell@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 16:07:40 -0600
+Subject: [PATCH] suniv do not enable cache
+
+---
+ arch/arm/mach-sunxi/board.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-sunxi/board.c b/arch/arm/mach-sunxi/board.c
+index 788689fa99..3095444612 100644
+--- a/arch/arm/mach-sunxi/board.c
++++ b/arch/arm/mach-sunxi/board.c
+@@ -374,7 +374,7 @@ void reset_cpu(ulong addr)
+ #endif
+ }
+ 
+-#if !CONFIG_IS_ENABLED(SYS_DCACHE_OFF) && !defined(CONFIG_ARM64)
++#if !CONFIG_IS_ENABLED(SYS_DCACHE_OFF) && !defined(CONFIG_ARM64) && !defined(CONFIG_CPU_ARM926EJS)
+ void enable_caches(void)
+ {
+ 	/* Enable D-cache. I-cache is already enabled in start.S */
+-- 
+2.34.1
+

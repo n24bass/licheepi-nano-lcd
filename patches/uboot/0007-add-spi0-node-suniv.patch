@@ -1,0 +1,50 @@
+From 09c8b0a389fe1a490abb9f4f24860c7d06d988a9 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Sat, 20 Jan 2018 11:57:56 +0800
+Subject: [PATCH] sunxi: add SPI0 node for suniv
+
+The suniv SoC has two SPI controllers, in which SPI0 is bootable.
+
+Add device tree node of the controller and its bootable pinmux node.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/dts/suniv.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm/dts/suniv.dtsi b/arch/arm/dts/suniv.dtsi
+index a5673f5006c..b11d9eb57a8 100644
+--- a/arch/arm/dts/suniv.dtsi
++++ b/arch/arm/dts/suniv.dtsi
+@@ -76,6 +76,19 @@
+ 			};
+ 		};
+ 
++		spi0: spi@1c05000 {
++			compatible = "allwinner,suniv-spi",
++				     "allwinner,sun8i-h3-spi";
++			reg = <0x01c05000 0x1000>;
++			interrupts = <10>;
++			clocks = <&ccu CLK_BUS_SPI0>, <&ccu CLK_BUS_SPI0>;
++			clock-names = "ahb", "mod";
++			resets = <&ccu RST_BUS_SPI0>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		ccu: clock@1c20000 {
+ 			compatible = "allwinner,suniv-f1c100s-ccu";
+ 			reg = <0x01c20000 0x400>;
+@@ -103,6 +116,11 @@
+ 			#interrupt-cells = <3>;
+ 			#gpio-cells = <3>;
+ 
++			spi0_pins_a: spi0-pins-pc {
++				pins = "PC0", "PC1", "PC2", "PC3";
++				function = "spi0";
++			};
++
+ 			uart0_pe_pins: uart-pins-pe {
+ 				pins = "PE0", "PE1";
+ 				function = "uart0";

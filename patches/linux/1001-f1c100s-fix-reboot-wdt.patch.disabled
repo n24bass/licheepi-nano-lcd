@@ -1,0 +1,23 @@
+From 5f4d7216ddfc5b6c643d68918dc930c0057e8310 Mon Sep 17 00:00:00 2001
+From: Sol Huebner <solhuebner@users.noreply.github.com>
+Date: Sun, 28 Feb 2021 17:49:26 -0500
+Subject: [PATCH] Fixes reboot issue
+
+https://github.com/thirtythreeforty/businesscard-linux/issues/12
+---
+ arch/arm/boot/dts/suniv-f1c100s.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+index 867b440080d19..92469e0350f49 100644
+--- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
++++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+@@ -236,7 +236,7 @@
+ 
+ 		wdt: watchdog@1c20ca0 {
+ 			compatible = "allwinner,suniv-f1c100s-wdt",
+-				     "allwinner,sun4i-a10-wdt";
++				     "allwinner,sun6i-a31-wdt";
+ 			reg = <0x01c20ca0 0x20>;
+ 		};
+ 

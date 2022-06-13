@@ -1,0 +1,34 @@
+From d6dac5bcfe4d4a8447aacb8b121390230ba9dbb6 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Sat, 13 Jan 2018 13:22:25 +0800
+Subject: [PATCH] drm: sun4i: bypass RGB interface dotclock check when panel is
+ used
+
+The RGB interface code of sun4i-drm has a dotclock check, which is used
+to prevent not supported resolutions when a bridge is used.
+
+However, it prevents most of the panels in panel-simple driver from
+being used, as the dotclock may not be divided precisely to the dotclock
+in panel-simple driver.
+
+Bypass the dotclock check when a panel is used.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun4i_rgb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index a901ec689b620..386d7fbffba21 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -116,6 +116,9 @@ static enum drm_mode_status sun4i_rgb_mode_valid(struct drm_encoder *crtc,
+ 	if (!rgb->bridge)
+ 		goto out;
+ 
++	if(connector->connector_type == DRM_MODE_CONNECTOR_Unknown)
++		goto out;
++
+ 	tcon->dclk_min_div = 6;
+ 	tcon->dclk_max_div = 127;
+ 	rounded_rate = clk_round_rate(tcon->dclk, rate);

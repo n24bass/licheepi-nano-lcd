@@ -1,0 +1,25 @@
+From 0c1938f7c3a16620e8bd0251e5e596ddf0de6718 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <19787629+mclewell@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 15:59:59 -0600
+Subject: [PATCH] suniv dram: fix includes
+
+---
+ arch/arm/mach-sunxi/dram_suniv.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/mach-sunxi/dram_suniv.c b/arch/arm/mach-sunxi/dram_suniv.c
+index 40aebf6eba..d902330e2b 100644
+--- a/arch/arm/mach-sunxi/dram_suniv.c
++++ b/arch/arm/mach-sunxi/dram_suniv.c
+@@ -15,6 +15,8 @@
+ #include <asm/arch/clock.h>
+ #include <asm/arch/dram.h>
+ #include <asm/arch/gpio.h>
++#include <linux/bitops.h>
++#include <linux/delay.h>
+ 
+ #define SDR_T_CAS			(0x2)
+ #define SDR_T_RAS			(0x8)
+-- 
+2.34.1
+

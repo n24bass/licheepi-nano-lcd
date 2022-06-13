@@ -1,0 +1,26 @@
+From 97d94124da494f0945e1bffa1813e10a9b842510 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Sun, 21 Jan 2018 00:43:43 +0800
+Subject: [PATCH] sunxi: allow to enable MMC driver when using PF UART0
+
+As the pinmux setup of MMC0 at PF is masked, the sunxi MMC driver is now
+harmless for PF uart setup, and it may be used for the extra MMC port.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/mmc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/Kconfig b/drivers/mmc/Kconfig
+index 04a4e7716f2..c333344471b 100644
+--- a/drivers/mmc/Kconfig
++++ b/drivers/mmc/Kconfig
+@@ -568,7 +568,7 @@ config ZYNQ_SDHCI_MIN_FREQ
+ 
+ config MMC_SUNXI
+ 	bool "Allwinner sunxi SD/MMC Host Controller support"
+-	depends on ARCH_SUNXI && !UART0_PORT_F
++	depends on ARCH_SUNXI
+ 	default y
+ 	help
+ 	  This selects support for the SD/MMC Host Controller on

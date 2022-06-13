@@ -1,0 +1,77 @@
+From e9a861c19c620224f5c1224cd7033b02adb8fa4d Mon Sep 17 00:00:00 2001
+From: George Hilliard <thirtythreeforty@gmail.com>
+Date: Sun, 21 Jul 2019 15:21:18 -0500
+Subject: [PATCH] sunxi: suniv: add device tree nodes for f1c100s MMC
+ controllers
+
+The f1c100s has two MMC controllers.  Add device tree nodes for them.
+
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+---
+ arch/arm/dts/suniv.dtsi | 47 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/arch/arm/dts/suniv.dtsi b/arch/arm/dts/suniv.dtsi
+index b11d9eb57a8..bea7c08e7dc 100644
+--- a/arch/arm/dts/suniv.dtsi
++++ b/arch/arm/dts/suniv.dtsi
+@@ -125,6 +125,11 @@
+ 				pins = "PE0", "PE1";
+ 				function = "uart0";
+ 			};
++
++			mmc0_pins: mmc0-pins {
++				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
++				function = "mmc0";
++			};
+ 		};
+ 
+ 		timer@1c20c00 {
+@@ -197,5 +202,47 @@
+ 			#phy-cells = <1>;
+ 			status = "disabled";
+ 		};
++
++		mmc0: mmc@1c0f000 {
++			compatible = "allwinner,suniv-f1c100s-mmc",
++			             "allwinner,sun7i-a20-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>,
++			         <&ccu CLK_MMC0>,
++			         <&ccu CLK_MMC0_OUTPUT>,
++			         <&ccu CLK_MMC0_SAMPLE>;
++			clock-names = "ahb",
++			              "mmc",
++			              "output",
++			              "sample";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <23>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&mmc0_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@1c10000 {
++			compatible = "allwinner,suniv-f1c100s-mmc",
++			             "allwinner,sun7i-a20-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>,
++			         <&ccu CLK_MMC1>,
++			         <&ccu CLK_MMC1_OUTPUT>,
++			         <&ccu CLK_MMC1_SAMPLE>;
++			clock-names = "ahb",
++			              "mmc",
++			              "output",
++			              "sample";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <24>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
+ 	};
+ };

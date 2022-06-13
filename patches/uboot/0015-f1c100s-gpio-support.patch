@@ -1,0 +1,36 @@
+From 2757b2e3e93739f964ae5c6aef73764a6db696a1 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <19787629+mclewell@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 15:52:57 -0600
+Subject: [PATCH] F1C100s add GPIO support
+
+---
+ drivers/gpio/sunxi_gpio.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/gpio/sunxi_gpio.c b/drivers/gpio/sunxi_gpio.c
+index 02c3471b56..58f9883d0e 100644
+--- a/drivers/gpio/sunxi_gpio.c
++++ b/drivers/gpio/sunxi_gpio.c
+@@ -320,6 +320,11 @@ static const struct sunxi_gpio_soc_data soc_data_a_all = {
+ 	.no_banks = SUNXI_GPIO_BANKS,
+ };
+ 
++static const struct sunxi_gpio_soc_data soc_data_a_6 = {
++	.start = 0,
++	.no_banks = 6,
++};
++
+ static const struct sunxi_gpio_soc_data soc_data_l_1 = {
+ 	.start = 'L' - 'A',
+ 	.no_banks = 1,
+@@ -363,6 +368,7 @@ static const struct udevice_id sunxi_gpio_ids[] = {
+ 	ID("allwinner,sun9i-a80-r-pinctrl",	l_3),
+ 	ID("allwinner,sun50i-a64-r-pinctrl",	l_1),
+ 	ID("allwinner,sun50i-h6-r-pinctrl",	l_2),
++	ID("allwinner,suniv-pinctrl", a_6),
+ 	{ }
+ };
+ 
+-- 
+2.34.1
+

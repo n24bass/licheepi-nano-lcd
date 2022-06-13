@@ -1,0 +1,27 @@
+From de184de46f65facfa3396bcc35043ecba9a0ab3d Mon Sep 17 00:00:00 2001
+From: George Hilliard <thirtythreeforty@gmail.com>
+Date: Mon, 17 Jun 2019 23:02:03 -0500
+Subject: [PATCH] sunxi-spi: Add suniv pin controller support
+
+suniv needs slightly different register settings to enable the SPI
+peripheral.  The magic numbers are already provided by the architecture
+support; we just have to check for them here.
+
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+---
+ drivers/spi/spi-sunxi.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/spi/spi-sunxi.c b/drivers/spi/spi-sunxi.c
+index 2d02289d04d..dcdface854f 100644
+--- a/drivers/spi/spi-sunxi.c
++++ b/drivers/spi/spi-sunxi.c
+@@ -251,6 +251,8 @@ static int sun4i_spi_parse_pins(struct udevice *dev)
+ 
+ 			if (IS_ENABLED(CONFIG_MACH_SUN50I))
+ 				sunxi_gpio_set_cfgpin(pin, SUN50I_GPC_SPI0);
++			else if (IS_ENABLED(CONFIG_MACH_SUNIV))
++				sunxi_gpio_set_cfgpin(pin, SUNIV_GPC_SPI0);
+ 			else
+ 				sunxi_gpio_set_cfgpin(pin, SUNXI_GPC_SPI0);
+ 			sunxi_gpio_set_drv(pin, drive);

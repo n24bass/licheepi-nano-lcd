@@ -1,0 +1,118 @@
+From 6aa9636dd8f78ec86492e215f4d43bd7fc03ebd5 Mon Sep 17 00:00:00 2001
+From: George Hilliard <thirtythreeforty@gmail.com>
+Date: Mon, 17 Jun 2019 19:15:01 -0500
+Subject: [PATCH] sunxi: Implement clock driver for suniv f1c100s
+
+The f1c100s has a simple clock tree similar to those of other sunxi
+parts.  Add support for it.
+
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+---
+ drivers/clk/sunxi/Kconfig       |  7 ++++
+ drivers/clk/sunxi/Makefile      |  1 +
+ drivers/clk/sunxi/clk_f1c100s.c | 66 +++++++++++++++++++++++++++++++++
+ 3 files changed, 74 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk_f1c100s.c
+
+diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
+index 5ff101b9930..fca810ae0ee 100644
+--- a/drivers/clk/sunxi/Kconfig
++++ b/drivers/clk/sunxi/Kconfig
+@@ -9,6 +9,13 @@ config CLK_SUNXI
+ 
+ if CLK_SUNXI
+ 
++config CLK_SUNIV_F1C100S
++	bool "Clock driver for Allwinner F1C100s"
++	default MACH_SUNIV
++	help
++	  This enables common clock driver support for platforms based
++	  on Allwinner F1C100s SoC.
++
+ config CLK_SUN4I_A10
+ 	bool "Clock driver for Allwinner A10/A20"
+ 	default MACH_SUN4I || MACH_SUN7I
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 36fb2aeb56c..664259d7d20 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -6,6 +6,7 @@
+ 
+ obj-$(CONFIG_CLK_SUNXI) += clk_sunxi.o
+ 
++obj-$(CONFIG_CLK_SUNIV_F1C100S) += clk_f1c100s.o
+ obj-$(CONFIG_CLK_SUN4I_A10) += clk_a10.o
+ obj-$(CONFIG_CLK_SUN5I_A10S) += clk_a10s.o
+ obj-$(CONFIG_CLK_SUN6I_A31) += clk_a31.o
+diff --git a/drivers/clk/sunxi/clk_f1c100s.c b/drivers/clk/sunxi/clk_f1c100s.c
+new file mode 100644
+index 00000000000..e43a1e0a55f
+--- /dev/null
++++ b/drivers/clk/sunxi/clk_f1c100s.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: (GPL-2.0+)
++/*
++ * Copyright (C) 2019 George Hilliard <thirtythreeforty@gmail.com>.
++ */
++
++#include <common.h>
++#include <clk-uclass.h>
++#include <dm.h>
++#include <errno.h>
++#include <asm/arch/ccu.h>
++#include <dt-bindings/clock/suniv-ccu.h>
++#include <dt-bindings/reset/suniv-ccu.h>
++
++static struct ccu_clk_gate f1c100s_gates[] = {
++	[CLK_BUS_MMC0]		= GATE(0x060, BIT(8)),
++	[CLK_BUS_MMC1]		= GATE(0x060, BIT(9)),
++	[CLK_BUS_SPI0]		= GATE(0x060, BIT(20)),
++	[CLK_BUS_SPI1]		= GATE(0x060, BIT(21)),
++	[CLK_BUS_OTG]		= GATE(0x060, BIT(24)),
++
++	[CLK_BUS_UART0]		= GATE(0x06c, BIT(20)),
++	[CLK_BUS_UART1]		= GATE(0x06c, BIT(21)),
++	[CLK_BUS_UART2]		= GATE(0x06c, BIT(22)),
++
++	[CLK_USB_PHY0]          = GATE(0x0cc, BIT(1)),
++};
++
++static struct ccu_reset f1c100s_resets[] = {
++	[RST_USB_PHY0]		= RESET(0x0cc, BIT(0)),
++
++	[RST_BUS_MMC0]		= RESET(0x2c0, BIT(8)),
++	[RST_BUS_MMC1]		= RESET(0x2c0, BIT(9)),
++	[RST_BUS_SPI0]		= RESET(0x2c0, BIT(20)),
++	[RST_BUS_SPI1]		= RESET(0x2c0, BIT(21)),
++	[RST_BUS_OTG]		= RESET(0x2c0, BIT(24)),
++
++	[RST_BUS_UART0]		= RESET(0x2d0, BIT(20)),
++	[RST_BUS_UART1]		= RESET(0x2d0, BIT(21)),
++	[RST_BUS_UART2]		= RESET(0x2d0, BIT(22)),
++};
++
++static const struct ccu_desc f1c100s_ccu_desc = {
++	.gates = f1c100s_gates,
++	.resets = f1c100s_resets,
++};
++
++static int f1c100s_clk_bind(struct udevice *dev)
++{
++	return sunxi_reset_bind(dev, ARRAY_SIZE(f1c100s_resets));
++}
++
++static const struct udevice_id f1c100s_clk_ids[] = {
++	{ .compatible = "allwinner,suniv-f1c100s-ccu",
++	  .data = (ulong)&f1c100s_ccu_desc },
++	{ }
++};
++
++U_BOOT_DRIVER(clk_suniv_f1c100s) = {
++	.name		= "suniv_f1c100s_ccu",
++	.id		= UCLASS_CLK,
++	.of_match	= f1c100s_clk_ids,
++	.priv_auto_alloc_size	= sizeof(struct ccu_priv),
++	.ops		= &sunxi_clk_ops,
++	.probe		= sunxi_clk_probe,
++	.bind		= f1c100s_clk_bind,
++};

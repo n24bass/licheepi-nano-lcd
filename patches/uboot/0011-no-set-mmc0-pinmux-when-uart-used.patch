@@ -1,0 +1,35 @@
+From f5ea631ba84825e2a0cd84be58b2246f8e928dd3 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Sun, 21 Jan 2018 00:40:14 +0800
+Subject: [PATCH] sunxi: do not set PF MMC0 pinmux when PF uart is used
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ board/sunxi/board.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/board/sunxi/board.c b/board/sunxi/board.c
+index 2028e31afb3..4379d08f47e 100644
+--- a/board/sunxi/board.c
++++ b/board/sunxi/board.c
+@@ -373,17 +373,19 @@ void board_nand_init(void)
+ #ifdef CONFIG_MMC
+ static void mmc_pinmux_setup(int sdc)
+ {
+-	unsigned int pin;
++	__maybe_unused unsigned int pin;
+ 	__maybe_unused int pins;
+ 
+ 	switch (sdc) {
+ 	case 0:
+ 		/* SDC0: PF0-PF5 */
++#ifndef CONFIG_UART0_PORT_F
+ 		for (pin = SUNXI_GPF(0); pin <= SUNXI_GPF(5); pin++) {
+ 			sunxi_gpio_set_cfgpin(pin, SUNXI_GPF_SDC0);
+ 			sunxi_gpio_set_pull(pin, SUNXI_GPIO_PULL_UP);
+ 			sunxi_gpio_set_drv(pin, 2);
+ 		}
++#endif
+ 		break;
+ 
+ 	case 1:

@@ -1,0 +1,42 @@
+From 845a174f87d801b6447ebd92db794f3f7ab9d5d4 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <matt@mattclewell.com>
+Date: Fri, 10 Jun 2022 18:53:13 -0500
+Subject: [PATCH] suniv-f1c100s-licheepi-nano enable mmc0
+
+---
+ arch/arm/dts/suniv-f1c100s-licheepi-nano.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/dts/suniv-f1c100s-licheepi-nano.dts
+index f2794e46f2..eb78af1c91 100644
+--- a/arch/arm/dts/suniv-f1c100s-licheepi-nano.dts
++++ b/arch/arm/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -21,6 +21,14 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++    reg_vcc3v3: vcc3v3 {
++        compatible = "regulator-fixed";
++        regulator-name = "vcc3v3";
++        regulator-min-microvolt = <3300000>;
++        regulator-max-microvolt = <3300000>;
++    };
++
+ };
+ 
+ &otg_sram {
+@@ -56,3 +64,10 @@
+ 	usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
+ 	status = "okay";
+ };
++
++&mmc0 {
++    vmmc-supply = <&reg_vcc3v3>;
++    bus-width = <4>;
++    broken-cd;
++    status = "okay";
++};
+-- 
+2.36.1
+

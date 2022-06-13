@@ -1,0 +1,92 @@
+From 86599e9087a4e9781f4be73aa830941ec9f7f8e3 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Sat, 20 Jan 2018 05:27:35 +0800
+Subject: [PATCH] drm: sun4i: add compatible strings for suniv DE components
+
+The suniv display engine is just the traditional DE1 of Allwinner. As it
+has only one pipeline, no mux is needed; for TCON output mux there's
+still no document.
+
+Add compatible strings for its components.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 7 +++++++
+ drivers/gpu/drm/sun4i/sun4i_drv.c     | 4 +++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c    | 9 +++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 78d8c3afe8253..d31d4e424eaae 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -972,6 +972,9 @@ static int sun4i_backend_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct sun4i_backend_quirks suniv_backend_quirks = {
++};
++
+ static const struct sun4i_backend_quirks sun4i_backend_quirks = {
+ 	.needs_output_muxing = true,
+ };
+@@ -995,6 +998,10 @@ static const struct sun4i_backend_quirks sun9i_backend_quirks = {
+ };
+ 
+ static const struct of_device_id sun4i_backend_of_table[] = {
++	{
++		.compatible = "allwinner,suniv-f1c100s-display-backend",
++		.data = &suniv_backend_quirks,
++	},
+ 	{
+ 		.compatible = "allwinner,sun4i-a10-display-backend",
+ 		.data = &sun4i_backend_quirks,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 3ff73998d841f..59f6d5d765c03 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -164,7 +164,8 @@ static bool sun4i_drv_node_is_connector(struct device_node *node)
+ 
+ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ {
+-	return of_device_is_compatible(node, "allwinner,sun4i-a10-display-frontend") ||
++	return of_device_is_compatible(node, "allwinner,suniv-f1c100s-display-frontend") ||
++		of_device_is_compatible(node, "allwinner,sun4i-a10-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun5i-a13-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun7i-a20-display-frontend") ||
+@@ -404,6 +405,7 @@ static int sun4i_drv_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sun4i_drv_of_table[] = {
++	{ .compatible = "allwinner,suniv-f1c100s-display-engine" },
+ 	{ .compatible = "allwinner,sun4i-a10-display-engine" },
+ 	{ .compatible = "allwinner,sun5i-a10s-display-engine" },
+ 	{ .compatible = "allwinner,sun5i-a13-display-engine" },
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 64c43ee6bd92f..0168283ebacb5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1419,6 +1419,14 @@ static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
+ 	return 0;
+ }
+ 
++static const struct sun4i_tcon_quirks suniv_f1c100s_quirks = {
++	/*
++	 * The F1C100s SoC has a second channel in TCON, but the clock input of
++	 * it is not documented.
++	 */
++	/* .has_channel_1	= true, */
++};
++
+ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
+ 	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+@@ -1487,6 +1495,7 @@ static const struct sun4i_tcon_quirks sun9i_a80_tcon_tv_quirks = {
+ 
+ /* sun4i_drv uses this list to check if a device node is a TCON */
+ const struct of_device_id sun4i_tcon_of_table[] = {
++	{ .compatible = "allwinner,suniv-f1c100s-tcon", .data = &suniv_f1c100s_quirks },
+ 	{ .compatible = "allwinner,sun4i-a10-tcon", .data = &sun4i_a10_quirks },
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },

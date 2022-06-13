@@ -1,0 +1,53 @@
+From 869a7c04f23fe9e10c26b7f1af9774ea813ea49a Mon Sep 17 00:00:00 2001
+From: George Hilliard <thirtythreeforty@gmail.com>
+Date: Wed, 19 Jun 2019 22:37:30 -0500
+Subject: [PATCH] sunxi-spi: restore bus speed and mode after reset
+
+The sunxi SPI peripheral driver resets the device completely (disabling
+clocks and power) when the bus is released and turns it back on when
+claiming.  On the F1C100s (and maybe others), the peripheral resets back
+to default register settings, losing speed and mode settings.
+
+Restore these settings when resetting the peripheral.
+
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+Cc: Jagan Teki <jteki@openedev.com>
+---
+ drivers/spi/spi-sunxi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-sunxi.c b/drivers/spi/spi-sunxi.c
+index dbfeac77eec..2d02289d04d 100644
+--- a/drivers/spi/spi-sunxi.c
++++ b/drivers/spi/spi-sunxi.c
+@@ -35,6 +35,10 @@
+ 
+ DECLARE_GLOBAL_DATA_PTR;
+ 
++/* Forward declarations of some reused functions */
++static int sun4i_spi_set_speed(struct udevice *dev, uint speed);
++static int sun4i_spi_set_mode(struct udevice *dev, uint mode);
++
+ /* sun4i spi registers */
+ #define SUN4I_RXDATA_REG		0x00
+ #define SUN4I_TXDATA_REG		0x04
+@@ -300,7 +304,8 @@ static inline int sun4i_spi_set_clock(struct udevice *dev, bool enable)
+ 
+ static int sun4i_spi_claim_bus(struct udevice *dev)
+ {
+-	struct sun4i_spi_priv *priv = dev_get_priv(dev->parent);
++	struct udevice *bus = dev->parent;
++	struct sun4i_spi_priv *priv = dev_get_priv(bus);
+ 	int ret;
+ 
+ 	ret = sun4i_spi_set_clock(dev->parent, true);
+@@ -317,6 +322,9 @@ static int sun4i_spi_claim_bus(struct udevice *dev)
+ 	setbits_le32(SPI_REG(priv, SPI_TCR), SPI_BIT(priv, SPI_TCR_CS_MANUAL) |
+ 		     SPI_BIT(priv, SPI_TCR_CS_ACTIVE_LOW));
+ 
++	sun4i_spi_set_speed(bus, priv->freq);
++	sun4i_spi_set_mode(bus, priv->mode);
++
+ 	return 0;
+ }
+ 

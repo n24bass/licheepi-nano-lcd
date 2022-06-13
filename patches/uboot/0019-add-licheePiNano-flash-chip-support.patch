@@ -1,0 +1,26 @@
+From c0ff302fa622ce5081c49ef573e0f4b125bb1e77 Mon Sep 17 00:00:00 2001
+From: AndersBNielsen <forstuvning@gmail.com>
+Date: Sat, 11 Jan 2020 13:07:48 +0100
+Subject: [PATCH] Update spi-nor-ids.c
+
+Added xt25f128b
+---
+ drivers/mtd/spi/spi-nor-ids.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/mtd/spi/spi-nor-ids.c b/drivers/mtd/spi/spi-nor-ids.c
+index 3215e2431dc..4b5cb9882f9 100644
+--- a/drivers/mtd/spi/spi-nor-ids.c
++++ b/drivers/mtd/spi/spi-nor-ids.c
+@@ -266,6 +266,11 @@ const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		INFO("xt25f128b", 0x0b4018, 0, 64 * 1024, 256,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{
+ 		INFO("w25q128jv", 0xef7018, 0, 64 * 1024, 256,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |

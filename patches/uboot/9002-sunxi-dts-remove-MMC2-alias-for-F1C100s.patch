@@ -1,0 +1,28 @@
+From 99e5a1468279eb368eb9bdc8b0af375af7afc480 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <19787629+mclewell@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 15:54:33 -0600
+Subject: [PATCH] sunxi dts remove MMC2 alias for F1C100s
+
+---
+ arch/arm/dts/sunxi-u-boot.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/dts/sunxi-u-boot.dtsi b/arch/arm/dts/sunxi-u-boot.dtsi
+index c77cf7cacf..2399009e15 100644
+--- a/arch/arm/dts/sunxi-u-boot.dtsi
++++ b/arch/arm/dts/sunxi-u-boot.dtsi
+@@ -9,9 +9,11 @@
+ #endif
+ 
+ / {
++	/* Remove reference to MMC2 for F1C100s
+ 	aliases {
+ 		mmc1 = &mmc2;
+ 	};
++	*/
+ 
+ 	binman: binman {
+ 		multiple-images;
+-- 
+2.34.1
+

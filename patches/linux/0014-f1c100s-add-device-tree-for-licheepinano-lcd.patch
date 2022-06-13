@@ -1,0 +1,81 @@
+From 1e3de5f2bc287fda34c1a6902a90663324c63d64 Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <matt@mattclewell.com>
+Date: Sat, 11 Jun 2022 20:36:35 -0500
+Subject: [PATCH] f1c100s add device tree for licheepin-nano with lcd
+
+---
+ arch/arm/boot/dts/Makefile                    |  3 +-
+ .../suniv-f1c100s-licheepi-nano-with-lcd.dts  | 47 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano-with-lcd.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7c16f8a2b738..f5ff86274d21 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1328,7 +1328,8 @@ dtb-$(CONFIG_MACH_SUN9I) += \
+ 	sun9i-a80-optimus.dtb \
+ 	sun9i-a80-cubieboard4.dtb
+ dtb-$(CONFIG_MACH_SUNIV) += \
+-	suniv-f1c100s-licheepi-nano.dtb
++	suniv-f1c100s-licheepi-nano.dtb \
++    suniv-f1c100s-licheepi-nano-with-lcd.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+ 	tegra20-acer-a500-picasso.dtb \
+ 	tegra20-asus-tf101.dtb \
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano-with-lcd.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano-with-lcd.dts
+new file mode 100644
+index 000000000000..9da55cb99274
+--- /dev/null
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano-with-lcd.dts
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2018 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR X11)
++ */
++
++#include "suniv-f1c100s-licheepi-nano.dts"
++
++/ {
++	panel: panel {
++		compatible = "urt,umsh-8596md-t", "simple-panel";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
++	};
++};
++
++&be0 {
++	status = "okay";
++};
++
++&de {
++	status = "okay";
++};
++
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++	status = "okay";
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
++	};
++};
+-- 
+2.36.1
+

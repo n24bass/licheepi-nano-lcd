@@ -1,0 +1,53 @@
+From be19b0e7c48cb489b2bc8074bf796c0630b7994d Mon Sep 17 00:00:00 2001
+From: Matthew Clewell <19787629+mclewell@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 16:03:13 -0600
+Subject: [PATCH] Add SPL boot sequence to suniv
+
+---
+ arch/arm/mach-sunxi/board.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/arm/mach-sunxi/board.c b/arch/arm/mach-sunxi/board.c
+index ae6a6895f0..788689fa99 100644
+--- a/arch/arm/mach-sunxi/board.c
++++ b/arch/arm/mach-sunxi/board.c
+@@ -282,6 +282,8 @@ uint32_t sunxi_get_boot_device(void)
+ }
+ 
+ #ifdef CONFIG_SPL_BUILD
++
++#ifndef CONFIG_MACH_SUNIV
+ /*
+  * The eGON SPL image can be located at 8KB or at 128KB into an SD card or
+  * an eMMC device. The boot source has bit 4 set in the latter case.
+@@ -307,6 +309,27 @@ u32 spl_boot_device(void)
+ 	return sunxi_get_boot_device();
+ }
+ 
++#else
++/*
++ * suniv BROM do not pass the boot media type to SPL, so we try with the
++ * boot sequence in BROM: mmc0->spinor->fail.
++ */
++void board_boot_order(u32 *spl_boot_list)
++{
++	/*
++	 * See the comments above in sunxi_get_boot_device() for infomation
++	 * about FEL boot.
++	 */
++	if (!is_boot0_magic(SPL_ADDR + 4)) {
++		spl_boot_list[0] = BOOT_DEVICE_BOARD;
++		return;
++	}
++
++	spl_boot_list[0] = BOOT_DEVICE_MMC1;
++	spl_boot_list[1] = BOOT_DEVICE_SPI;
++   }
++#endif
++
+ void board_init_f(ulong dummy)
+ {
+ 	spl_init();
+-- 
+2.34.1
+
