@@ -1,3 +1,11 @@
+mclewell さんのものをベースに Licheepi Nano 用に config と dts に手をいれています。
+
+* LCD 480x272 
+* spi1
+* i2c0
+* codec - HeadPhone 
+* lradc - 4 key input
+
 # LicheePi-Nano with LCD
 Linux capable single board computer using the Allwinner F1C100s SoC
 with 32MB of embedded RAM. 
