@@ -1,0 +1,76 @@
+diff --git a/makefile b/makefile
+index 1eac71f..8820a57 100644
+--- a/makefile
++++ b/makefile
+@@ -1,8 +1,11 @@
+ CC ?= gcc
+ #CC ?= clang
++TARGET_CC ?= arm-buildroot-linux-gnueabi-gcc
+ 
+-CFLAGS  ?= -std=c99 -pedantic -Wall -Wextra -O3 -s -pipe
++CFLAGS_FOR_BUILD  += -std=c99 -pedantic -Wall -Wextra -O3 -s -pipe
+ LDFLAGS ?=
++TARGET_CFLAGS ?= -std=c99 -Wall -Wextra -O1 -g -s -pipe
++TARGET_LDFLAGS ?= 
+ 
+ XCFLAGS  ?= -std=c99 -pedantic -Wall -Wextra -I/usr/include/X11/ -O3 -s -pipe
+ XLDFLAGS ?= -lX11
+@@ -23,7 +26,7 @@ yaft: mkfont_bdf
+ yaftx: mkfont_bdf
+ 
+ mkfont_bdf: tools/mkfont_bdf.c tools/mkfont_bdf.h tools/bdf.h tools/util.h
+-	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS)
++	$(CC_FOR_BUILD) -o $@ $< $(CFLAGS_FOR_BUILD) $(LDFLAGS_FOR_BUILD)
+ 
+ glyph.h: mkfont_bdf
+ 	# If you want to use your favorite fonts, please change following line
+@@ -35,7 +38,7 @@ glyph.h: mkfont_bdf
+ 
+ yaft: yaft.c $(HDR)
+ 	# If you want to change configuration, please modify conf.h before make (see conf.h for more detail)
+-	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS)
++	$(TARGET_CC) -o $@ $< $(TARGET_CFLAGS) $(TARGET_LDFLAGS)
+ 
+ yaftx: x/yaftx.c $(HDR)
+ 	# If you want to change configuration, please modify conf.h before make (see conf.h for more detail)
+diff --git a/terminal.h b/terminal.h
+index b175610..9f987b6 100644
+--- a/terminal.h
++++ b/terminal.h
+@@ -199,13 +199,33 @@ void addch(struct terminal_t *term, uint32_t code)
+ 	width = wcwidth(code);
+ 
+ 	if (width <= 0)                                /* zero width: not support combining characters */
+-		return;
+-	else if (0x100000 <= code && code <= 0x10FFFD) /* unicode private area: plane 16 (DRCSMMv1) */
++	{
++		// logging(DEBUG, "addch: U+%.4X is zero-width.\n", code);
++		if (code < ' ') {
++			// ASCII Control char ?
++			return;
++		} else {
++			// return;
++			// logging(DEBUG, "addch: DEBUG: Assuming full-width.\n");
++			width = 2;
++		}
++	}
++
++	if (0x100000 <= code && code <= 0x10FFFD) /* unicode private area: plane 16 (DRCSMMv1) */
+ 		glyphp = drcs_glyph(term, code);
+ 	else if (code >= UCS2_CHARS                    /* yaft support only UCS2 */
+ 		|| term->glyph[code] == NULL           /* missing glyph */
+ 		|| term->glyph[code]->width != width)  /* width unmatched */
+-		glyphp = (width == 1) ? term->glyph[SUBSTITUTE_HALF]: term->glyph[SUBSTITUTE_WIDE];
++	{
++		// glyphp = (width == 1) ? term->glyph[SUBSTITUTE_HALF]: term->glyph[SUBSTITUTE_WIDE];
++		if (width == 1) {
++			glyphp =  term->glyph[SUBSTITUTE_HALF];
++			// logging(DEBUG, "addch: U+%.4X is replaced with SUBSTITUDE_HALF\n", code);
++		} else {
++			glyphp =  term->glyph[SUBSTITUTE_WIDE];
++			// logging(DEBUG, "addch: U+%.4X is replaced with SUBSTITUDE_WIDE\n", code);
++		}
++	}
+ 	else
+ 		glyphp = term->glyph[code];
+

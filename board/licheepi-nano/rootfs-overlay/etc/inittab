@@ -29,10 +29,8 @@ null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr
 ::sysinit:/etc/init.d/rcS
 
 # Put a getty on the serial port
-#/dev/ttyS0::respawn:/sbin/getty -L  /dev/ttyS0 115200 vt100 # GENERIC_SERIAL
-#console::respawn:/sbin/getty -L  console 0 vt100
-/dev/ttyS0::respawn:-/bin/sh
-console::respawn:-/bin/sh
+/dev/ttyS0::respawn:/sbin/getty -L  /dev/ttyS0 115200 vt100 # GENERIC_SERIAL
+console::respawn:/sbin/agetty --noclear -a root -s console vt100
 
 # Stuff to do for the 3-finger salute
 #::ctrlaltdel:/sbin/reboot
