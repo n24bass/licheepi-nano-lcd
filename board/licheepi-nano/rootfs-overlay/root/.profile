@@ -22,7 +22,7 @@ if [ "$IS_TERMINAL_OVER_SERIAL" != "" ]; then
 elif [ "$TERM" != "yaft-256color" ]; then
         echo Execute Vim in yaft...
         # sleep 1
-        /usr/bin/yaft
+        /usr/bin/yaft /bin/bash
         # /usr/bin/yaft vim /root/note.txt
         # /usr/bin/yaft_wall /root/space_480x272.png
 fi
