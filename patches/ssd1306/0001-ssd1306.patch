@@ -1,0 +1,26 @@
+diff --git a/I2C_Library/I2C.h b/I2C_Library/I2C.h
+index 64a8f57..4dd332a 100644
+--- a/I2C_Library/I2C.h
++++ b/I2C_Library/I2C.h
+@@ -41,7 +41,7 @@ SOFTWARE.
+ /*Definitions specific to i2c-x */
+ #define I2C_DEV0_PATH                     "/dev/i2c-0"
+ #define I2C_DEV1_PATH                     "/dev/i2c-1"
+-#define I2C_DEV2_PATH                     "/dev/i2c-2"
++#define I2C_DEV2_PATH                     "/dev/i2c-0"
+ 
+ /*I2C device configuration structure*/
+ typedef struct{
+diff --git a/Makefile b/Makefile
+index e9dffd3..db117a3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,7 +3,7 @@ OBJS := $(SOURCES:.c=.o)
+ CPPFLAGS := -I SSD1306_OLED_Library -I I2C_Library
+ CFLAGS := -g
+ 
+-ssd: $(OBJS)
++ssd1306: $(OBJS)
+ 	$(CC) $^ -o $@
+ 
+ clean:

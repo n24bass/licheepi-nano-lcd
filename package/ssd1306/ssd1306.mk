@@ -1,0 +1,18 @@
+SSD1306_VERSION = a92afb50c48540f623d37bd291a4c3e05620c810
+SSD1306_SITE = https://github.com/deeplyembeddedWP/SSD1306-OLED-display-driver-for-BeagleBone
+SSD1306_SITE_METHOD = git
+SSD1306_LICENSE = MIT License
+SSD1306_LICENSE_FILES = LICENSE
+
+SSD1306_CPPFLAGS = -I SSD1306_OLED_Library -I I2C_Library
+
+define SSD1306_BUILD_CMDS
+	LANG=ja_JP.UTF-8 $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) CPPFLAGS="$(SSD1306_CPPFLAGS)" ssd1306
+endef
+
+define SSD1306_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 $(@D)/ssd1306 $(TARGET_DIR)/usr/bin/ssd1306
+endef
+
+$(eval $(generic-package))
+

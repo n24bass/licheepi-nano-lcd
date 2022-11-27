@@ -1,3 +1,4 @@
 source "$BR2_EXTERNAL_LICHEEPI_NANO_PATH/package/sunxi-tools-f1c100s/Config.in.host"
 source "$BR2_EXTERNAL_LICHEEPI_NANO_PATH/package/sunxi-tools-f1c100s/Config.in"
 source "$BR2_EXTERNAL_LICHEEPI_NANO_PATH/package/yaft/Config.in"
+source "$BR2_EXTERNAL_LICHEEPI_NANO_PATH/package/ssd1306/Config.in"
