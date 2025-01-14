@@ -1,3 +1,9 @@
+2025.01 現在、mclewell さんのリポジトリが削除されており、ビルドできません。
+LCD 対応には verylowfreq さんの https://github.com/verylowfreq/buildroot-licheepi_nano を、
+LCD 対応不要で最新の Linux を使いたいなら https://github.com/goediy/licheepi-nano-mainline/ を使うことを勧めます。
+
+----
+
 mclewell さんのものをベースに Licheepi Nano 用に config と dts に手をいれています。
 
 * lcd - 480x272 
